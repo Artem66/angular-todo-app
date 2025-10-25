@@ -1,5 +1,5 @@
 <div class="todoapp">
-      <h1 class="todoapp__title">todos</h1>
+      <h1 class="todoapp__title"> Todos {{todos.length}} </h1>
 
       <div class="todoapp__content">
         <header class="todoapp__header">
@@ -21,7 +21,7 @@
         </header>
 
         <section class="todoapp__main" data-cy="TodoList">
-          <div data-cy="Todo" class="todo completed">
+          <div data-cy="Todo" class="todo" [class]="{completed: todo.completed}" *ngFor="let todo of todos">
             <label class="todo__status-label">
               <input
                 data-cy="TodoStatus"
@@ -31,114 +31,33 @@
               />
             </label>
 
-            <span data-cy="TodoTitle" class="todo__title">HTML</span>
-            <button
-              type="button"
-              class="todo__remove"
-              data-cy="TodoDeleteButton"
-            >
-              ×
-            </button>
+            @if(editing){
+              <form>
+                <input
+                  data-cy="TodoTitleField"
+                  type="text"
+                  class="todo__title-field"
+                  placeholder="Empty todo will be deleted"
+                  defaultValue="{{todo.title}}"
+                />
+              </form>
+            }
 
-            <div data-cy="TodoLoader" class="modal overlay">
-              <div class="modal-background has-background-white-ter"></div>
-              <div class="loader"></div>
-            </div>
-          </div>
+            @if(!editing){
+              <ng-container>
+                <span data-cy="TodoTitle" class="todo__title"> {{todo.title}} </span>
+                <button
+                  type="button"
+                  class="todo__remove"
+                  data-cy="TodoDeleteButton"
+                >
+                  ×
+                </button>
+              </ng-container>
+            }
 
-          <div data-cy="Todo" class="todo">
-            <label class="todo__status-label">
-              <input
-                data-cy="TodoStatus"
-                type="checkbox"
-                class="todo__status"
-              />
-            </label>
 
-            <span data-cy="TodoTitle" class="todo__title">CSS</span>
-
-            <button
-              type="button"
-              class="todo__remove"
-              data-cy="TodoDeleteButton"
-            >
-              ×
-            </button>
-
-            <div data-cy="TodoLoader" class="modal overlay">
-              <div class="modal-background has-background-white-ter"></div>
-              <div class="loader"></div>
-            </div>
-          </div>
-
-          <div data-cy="Todo" class="todo">
-            <label class="todo__status-label">
-              <input
-                data-cy="TodoStatus"
-                type="checkbox"
-                class="todo__status"
-              />
-            </label>
-
-            <form>
-              <input
-                data-cy="TodoTitleField"
-                type="text"
-                class="todo__title-field"
-                placeholder="Empty todo will be deleted"
-                defaultValue="JS"
-              />
-            </form>
-
-            <div data-cy="TodoLoader" class="modal overlay">
-              <div class="modal-background has-background-white-ter"></div>
-              <div class="loader"></div>
-            </div>
-          </div>
-
-          <div data-cy="Todo" class="todo">
-            <label class="todo__status-label">
-              <input
-                data-cy="TodoStatus"
-                type="checkbox"
-                class="todo__status"
-              />
-            </label>
-
-            <span data-cy="TodoTitle" class="todo__title">React</span>
-            <button
-              type="button"
-              class="todo__remove"
-              data-cy="TodoDeleteButton"
-            >
-              ×
-            </button>
-
-            <div data-cy="TodoLoader" class="modal overlay">
-              <div class="modal-background has-background-white-ter"></div>
-              <div class="loader"></div>
-            </div>
-          </div>
-
-          <div data-cy="Todo" class="todo">
-            <label class="todo__status-label">
-              <input
-                data-cy="TodoStatus"
-                type="checkbox"
-                class="todo__status"
-              />
-            </label>
-
-            <span data-cy="TodoTitle" class="todo__title">Redux</span>
-            <button
-              type="button"
-              class="todo__remove"
-              data-cy="TodoDeleteButton"
-            >
-              ×
-            </button>
-
-            <div data-cy="TodoLoader" class="modal overlay is-active">
+            <div data-cy="TodoLoader" class="modal overlay" [class.is-active]="true">
               <div class="modal-background has-background-white-ter"></div>
               <div class="loader"></div>
             </div>
