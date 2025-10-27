@@ -10,7 +10,7 @@
             class="todoapp__toggle-all active">
           </button>
 
-          <form (ngSubmit)="addTodo()" [formGroup]="todoFrom">
+          <form (ngSubmit)="addTodo()" [formGroup]="todoForm">
             <input
               data-cy="NewTodoField"
               type="text"
@@ -24,53 +24,10 @@
         </header>
 
         <section class="todoapp__main" data-cy="TodoList">
-          <div
-            data-cy="Todo"
-            class="todo"
-            [class.completed]="todo.completed"
+          <app-todo
             *ngFor="let todo of todos; let i = index;"
-          >
-            <label class="todo__status-label">
-              <input
-                data-cy="TodoStatus"
-                type="checkbox"
-                class="todo__status"
-                [(ngModel)]="todo.completed"
-              />
-            </label>
-
-            @if(editing){
-              <form>
-                <input
-                  data-cy="TodoTitleField"
-                  type="text"
-                  class="todo__title-field"
-                  placeholder="Empty todo will be deleted"
-                  defaultValue="{{todo.title}}"
-                />
-              </form>
-            }
-
-            @if(!editing){
-              <ng-container>
-                <span data-cy="TodoTitle" class="todo__title"> {{todo.title}} </span>
-                <button
-                  type="button"
-                  class="todo__remove"
-                  data-cy="TodoDeleteButton"
-                  (click)="todos.splice(i, 1)"
-                >
-                  ×
-                </button>
-              </ng-container>
-            }
-
-
-            <div data-cy="TodoLoader" class="modal overlay" [class.is-active]="false">
-              <div class="modal-background has-background-white-ter"></div>
-              <div class="loader"></div>
-            </div>
-          </div>
+            [todo]="todo"
+          ></app-todo>
         </section>
 
         <footer class="todoapp__footer" data-cy="Footer">

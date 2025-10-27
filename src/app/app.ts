@@ -2,6 +2,8 @@ import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Todo } from "./components/todo/todo";
+import { Todo as TodoType } from './types/todo';
 
 const todos = [
   { id: '1', title: 'Learn Angular', completed: true },
@@ -10,22 +12,16 @@ const todos = [
   { id: '4', title: 'Explore Standalone Components', completed: false },
 ];
 
-interface Todo {
-  id: string;
-  title: string;
-  completed: boolean;
-}
-
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [RouterOutlet, CommonModule, FormsModule, ReactiveFormsModule, Todo],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
 export class App {
   todos = todos;
-  editing = false;
-  todoFrom = new FormGroup({
+
+  todoForm = new FormGroup({
     title:  new FormControl('', {
       nonNullable: true,
       validators: [
@@ -37,7 +33,7 @@ export class App {
 
 
   get title() {
-    return this.todoFrom.get('title') as FormControl;
+    return this.todoForm.get('title') as FormControl;
   }
 
   get activeTodosCount(): number {
@@ -45,17 +41,17 @@ export class App {
   }
 
   addTodo() {
-    if(this.todoFrom.invalid) {
+    if(this.todoForm.invalid) {
       return;
     }
 
-    const newTodo: Todo = {
+    const newTodo: TodoType = {
       id: Date.now().toString(),
       title: this.title.value as string,
       completed: false,
     };
 
     this.todos.push(newTodo);
-    this.todoFrom.reset();
+    this.todoForm.reset();
   }
 }
