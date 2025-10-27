@@ -1,6 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
 const todos = [
   { id: '1', title: 'Learn Angular', completed: true },
@@ -17,17 +18,44 @@ interface Todo {
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, CommonModule],
+  imports: [RouterOutlet, CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
 export class App {
-  protected readonly title = signal('angular-todo-app')
   todos = todos;
   editing = false;
+  todoFrom = new FormGroup({
+    title:  new FormControl('', {
+      nonNullable: true,
+      validators: [
+        Validators.required,
+        Validators.minLength(3)
+      ],
+    }),
+  });
 
-  handleTodoToogle(event: Event, todo: Todo) {
-    const input = event.target as HTMLInputElement;
-    todo.completed = input.checked;
+
+  get title() {
+    return this.todoFrom.get('title') as FormControl;
+  }
+
+  get activeTodosCount(): number {
+    return this.todos.filter(todo => !todo.completed).length;
+  }
+
+  addTodo() {
+    if(this.todoFrom.invalid) {
+      return;
+    }
+
+    const newTodo: Todo = {
+      id: Date.now().toString(),
+      title: this.title.value as string,
+      completed: false,
+    };
+
+    this.todos.push(newTodo);
+    this.todoFrom.reset();
   }
 }
