@@ -9,6 +9,12 @@ const todos = [
   { id: '4', title: 'Explore Standalone Components', completed: false },
 ];
 
+interface Todo {
+  id: string;
+  title: string;
+  completed: boolean;
+}
+
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, CommonModule],
@@ -18,5 +24,10 @@ const todos = [
 export class App {
   protected readonly title = signal('angular-todo-app')
   todos = todos;
-  editing = false
+  editing = false;
+
+  handleTodoToogle(event: Event, todo: Todo) {
+    const input = event.target as HTMLInputElement;
+    todo.completed = input.checked;
+  }
 }

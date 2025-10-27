@@ -21,13 +21,14 @@
         </header>
 
         <section class="todoapp__main" data-cy="TodoList">
-          <div data-cy="Todo" class="todo" [class]="{completed: todo.completed}" *ngFor="let todo of todos">
+          <div data-cy="Todo" class="todo" [class.completed]="todo.completed" *ngFor="let todo of todos; let i = index;">
             <label class="todo__status-label">
               <input
                 data-cy="TodoStatus"
                 type="checkbox"
                 class="todo__status"
-                defaultChecked
+                [checked]="todo.completed"
+                (change)="handleTodoToogle($event, todo)"
               />
             </label>
 
@@ -50,6 +51,7 @@
                   type="button"
                   class="todo__remove"
                   data-cy="TodoDeleteButton"
+                  (click)="todos.splice(i, 1)"
                 >
                   ×
                 </button>
@@ -57,7 +59,7 @@
             }
 
 
-            <div data-cy="TodoLoader" class="modal overlay" [class.is-active]="true">
+            <div data-cy="TodoLoader" class="modal overlay" [class.is-active]="false">
               <div class="modal-background has-background-white-ter"></div>
               <div class="loader"></div>
             </div>
