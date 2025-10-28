@@ -1,6 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output } from '@angular/core';
 import { Todo as TodoType } from '../../types/todo';
 import { FormsModule } from '@angular/forms';
+import { EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-todo',
@@ -9,6 +10,8 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './todo.scss'
 })
 export class Todo {
+  @Output() delete = new EventEmitter();
+
   @Input() todo!: TodoType;
 
   editing = false;
