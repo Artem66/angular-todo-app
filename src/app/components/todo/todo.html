@@ -15,18 +15,28 @@
   @if(editing){
     <form>
       <input
+        #titleField
         data-cy="TodoTitleField"
         type="text"
         class="todo__title-field"
         placeholder="Empty todo will be deleted"
         defaultValue="{{todo.title}}"
+        [(ngModel)]="todo.title"
+        name="title"
+        (keyup.escape)="editing = false"
       />
     </form>
   }
 
   @if(!editing){
     <ng-container>
-      <span data-cy="TodoTitle" class="todo__title"> {{todo.title}} </span>
+      <span
+        data-cy="TodoTitle"
+        class="todo__title"
+        (dblclick)="editing = true"
+        >
+          {{todo.title}}
+        </span>
       <button
         type="button"
         class="todo__remove"
