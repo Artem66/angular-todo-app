@@ -13,7 +13,7 @@
   </label>
 
   @if(editing){
-    <form>
+    <form (ngSubmit)="save();">
       <input
         #titleField
         data-cy="TodoTitleField"
@@ -21,9 +21,10 @@
         class="todo__title-field"
         placeholder="Empty todo will be deleted"
         defaultValue="{{todo.title}}"
-        [(ngModel)]="todo.title"
+        [(ngModel)]="title"
         name="title"
         (keyup.escape)="editing = false"
+        (blur)="save()"
       />
     </form>
   }
@@ -33,7 +34,7 @@
       <span
         data-cy="TodoTitle"
         class="todo__title"
-        (dblclick)="editing = true"
+        (dblclick)="edit()"
         >
           {{todo.title}}
         </span>

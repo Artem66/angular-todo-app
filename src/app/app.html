@@ -25,7 +25,7 @@
 
         <section class="todoapp__main" data-cy="TodoList">
           <app-todo
-            *ngFor="let todo of todos; let i = index;"
+            *ngFor="let todo of todos; let i = index; trackBy:trackById"
             [todo]="todo"
             (delete)="todos.splice(i, 1)"
           ></app-todo>

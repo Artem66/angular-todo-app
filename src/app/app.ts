@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -18,7 +18,7 @@ const todos = [
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
-export class App {
+export class App implements OnInit {
   todos = todos;
 
   todoForm = new FormGroup({
@@ -38,6 +38,17 @@ export class App {
 
   get activeTodosCount(): number {
     return this.todos.filter(todo => !todo.completed).length;
+  }
+
+  constructor() {}
+  ngOnInit(): void {
+    setTimeout(() => {
+      this.todos[1] = { ...this.todos[1], title: 'Updated title' };
+    }, 3000);
+  }
+
+  trackById(index: number, item: TodoType) {
+    return item.id;
   }
 
   addTodo() {
