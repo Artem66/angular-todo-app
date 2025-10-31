@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -17,8 +17,9 @@ const todos = [
   imports: [RouterOutlet, CommonModule, FormsModule, ReactiveFormsModule, Todo],
   templateUrl: './app.html',
   styleUrl: './app.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class App implements OnInit {
+export class App {
   todos = todos;
 
   todoForm = new FormGroup({
@@ -40,29 +41,50 @@ export class App implements OnInit {
     return this.todos.filter(todo => !todo.completed).length;
   }
 
-  constructor() {}
-  ngOnInit(): void {
-    setTimeout(() => {
-      this.todos[1] = { ...this.todos[1], title: 'Updated title' };
-    }, 3000);
-  }
-
   trackById(index: number, item: TodoType) {
     return item.id;
   }
 
-  addTodo() {
+  handleFormSubmit() {
     if(this.todoForm.invalid) {
       return;
     }
 
+    this.addTodo(this.title.value);
+    this.todoForm.reset();
+  }
+
+  addTodo(newTitle: string){
     const newTodo: TodoType = {
       id: Date.now().toString(),
-      title: this.title.value as string,
+      title: newTitle,
       completed: false,
     };
 
-    this.todos.push(newTodo);
-    this.todoForm.reset();
+    this.todos = [...this.todos, newTodo];
+  }
+
+  renameTodo(todoId: string, title: string) {
+    this.todos = this.todos.map(todo => {
+      if (todo.id !== todoId) {
+        return todo;
+      }
+
+      return { ...todo, title, }
+    })
+  }
+
+  toggleTodo(todoId: string) {
+    this.todos = this.todos.map(todo => {
+      if (todo.id !== todoId) {
+        return todo;
+      }
+
+      return { ...todo, completed: !todo.completed, }
+    })
+  }
+
+  deleteTodo(todoId: string) {
+    this.todos = this.todos.filter(todo => todo.id !== todoId)
   }
 }

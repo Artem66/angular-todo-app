@@ -10,7 +10,7 @@
             class="todoapp__toggle-all active">
           </button>
 
-          <form (ngSubmit)="addTodo()" [formGroup]="todoForm">
+          <form (ngSubmit)="handleFormSubmit()" [formGroup]="todoForm">
             <input
               data-cy="NewTodoField"
               type="text"
@@ -27,7 +27,9 @@
           <app-todo
             *ngFor="let todo of todos; let i = index; trackBy:trackById"
             [todo]="todo"
-            (delete)="todos.splice(i, 1)"
+            (delete)="deleteTodo(todo.id)"
+            (rename)="renameTodo(todo.id, $event)"
+            (toggle)="toggleTodo(todo.id)"
           ></app-todo>
         </section>
 
