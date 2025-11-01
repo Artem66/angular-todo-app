@@ -2,10 +2,11 @@ import { ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, Outpu
 import { Todo as TodoType } from '../../types/todo';
 import { FormsModule } from '@angular/forms';
 import { EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-todo',
-  imports: [FormsModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './todo.html',
   styleUrl: './todo.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

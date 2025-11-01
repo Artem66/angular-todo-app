@@ -1,6 +1,5 @@
 <div class="todoapp">
       <h1 class="todoapp__title"> Todos {{todos.length}} </h1>
-      <p>{{ title.errors | json }}</p>
 
       <div class="todoapp__content">
         <header class="todoapp__header">
@@ -10,17 +9,7 @@
             class="todoapp__toggle-all active">
           </button>
 
-          <form (ngSubmit)="handleFormSubmit()" [formGroup]="todoForm">
-            <input
-              data-cy="NewTodoField"
-              type="text"
-              ref={newTodoField}
-              class="todoapp__new-todo"
-              placeholder="What needs to be done?"
-              name="title"
-              [formControl]="title"
-            />
-          </form>
+          <app-todo-form (save)="addTodo($event)"></app-todo-form>
         </header>
 
         <section class="todoapp__main" data-cy="TodoList">
@@ -35,7 +24,8 @@
 
         <footer class="todoapp__footer" data-cy="Footer">
           <span class="todo-count" data-cy="todosCounter">
-            {{ activeTodosCount }} items left
+            {{ (todos | filterActive).length }} pipe items left
+            {{ activeTodos.length }} setter items left
           </span>
 
           <nav class="filter" data-cy="Filter">

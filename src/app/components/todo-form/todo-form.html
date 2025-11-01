@@ -1,0 +1,10 @@
+<form (ngSubmit)="handleFormSubmit()" [formGroup]="todoForm">
+  <input
+    data-cy="NewTodoField"
+    type="text"
+    class="todoapp__new-todo"
+    placeholder="What needs to be done?"
+    name="title"
+    [formControl]="title"
+  />
+</form>
