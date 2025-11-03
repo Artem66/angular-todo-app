@@ -1,25 +1,28 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Todo } from "./components/todo/todo";
 import { Todo as TodoType } from './types/todo';
 import { TodoForm } from "./components/todo-form/todo-form";
 import { FilterActivePipe } from './pipes/filter-active-pipe';
-
-const todosFromServer = [
-  { id: '1', title: 'Learn Angular', completed: true },
-  { id: '2', title: 'Build a Todo App', completed: false },
-  { id: '3', title: 'Master Signals', completed: false },
-  { id: '4', title: 'Explore Standalone Components', completed: false },
-];
+import { TodosService } from './services/todos';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, CommonModule, FormsModule, ReactiveFormsModule, Todo, TodoForm, FilterActivePipe],
+  standalone: true,
+  imports: [
+    RouterOutlet,
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    Todo,
+    TodoForm,
+    FilterActivePipe,
+  ],
   templateUrl: './app.html',
   styleUrl: './app.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  // changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App implements OnInit {
   _todos: TodoType[] = [];
@@ -38,11 +41,18 @@ export class App implements OnInit {
     this.activeTodos = this._todos.filter(todo => !todo.completed);
   }
 
-  constructor() {
+  constructor(
+    private todoService: TodosService
+  ) {
 
   }
   ngOnInit(): void {
-    this.todos = todosFromServer;
+    this.todoService.getTodos()
+      .subscribe((todos) => {
+        console.log('todos', todos);
+
+        this.todos = todos
+      })
   }
 
 
