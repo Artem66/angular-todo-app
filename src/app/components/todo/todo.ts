@@ -37,8 +37,6 @@ export class Todo implements OnChanges {
       const prevTitle = todoChange.previousValue?.title;
       const currTitle = todoChange.currentValue?.title;
 
-      console.log(prevTitle);
-
       if (currTitle && currTitle !== prevTitle) {
         this.title = currTitle;
       }

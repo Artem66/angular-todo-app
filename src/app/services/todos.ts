@@ -22,4 +22,12 @@ export class TodosService {
   getTodos () {
     return this.http.get<Todo[]>(`${API_URL}/todos?userId=${USER_ID}`);
   }
+
+  createTodo(title: string) {
+    return this.http.post<Todo>(`${API_URL}/todos`, {
+      title,
+      userId: USER_ID,
+      completed: false,
+    });
+  }
 }

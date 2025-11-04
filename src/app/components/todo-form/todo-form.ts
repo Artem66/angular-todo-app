@@ -1,38 +1,37 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-
+import { CommonModule } from '@angular/common'; // Ensure CommonModule is imported if not standalone
 
 @Component({
   selector: 'app-todo-form',
-  imports: [ReactiveFormsModule],
+  // Ensure standalone: true if App is standalone
+  standalone: true, 
+  imports: [ReactiveFormsModule, CommonModule], 
   templateUrl: './todo-form.html',
   styleUrl: './todo-form.scss'
 })
 export class TodoForm {
-  @Output() save = new EventEmitter();
+  @Output() save = new EventEmitter<string>();
 
+  todoForm = new FormGroup({
+    title: new FormControl('', {
+      nonNullable: true,
+      validators: [
+        Validators.required,
+      ],
+    }),
+  });
 
-    todoForm = new FormGroup({
-      title:  new FormControl('', {
-        nonNullable: true,
-        validators: [
-          Validators.required,
-          Validators.minLength(3)
-        ],
-      }),
-    });
+  get title() {
+    return this.todoForm.get('title') as FormControl;
+  }
 
-
-    get title() {
-      return this.todoForm.get('title') as FormControl;
+  handleFormSubmit() {
+    if (this.todoForm.invalid) {
+      return;
     }
 
-    handleFormSubmit() {
-      if(this.todoForm.invalid) {
-        return;
-      }
-
-      this.save.emit(this.title.value);
-      this.todoForm.reset();
-    }
+    this.save.emit(this.title.value);
+    this.todoForm.reset();
+  }
 }

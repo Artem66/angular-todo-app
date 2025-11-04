@@ -42,17 +42,19 @@ export class App implements OnInit {
   }
 
   constructor(
-    private todoService: TodosService
+    private todosService: TodosService
   ) {
 
   }
   ngOnInit(): void {
-    this.todoService.getTodos()
-      .subscribe((todos) => {
-        console.log('todos', todos);
+    this.loadTodos();
+  }
 
-        this.todos = todos
-      })
+  loadTodos() {
+    this.todosService.getTodos()
+      .subscribe((todos) => {
+        this.todos = todos;
+      });
   }
 
 
@@ -65,13 +67,10 @@ export class App implements OnInit {
   }
 
   addTodo(newTitle: string){
-    const newTodo: TodoType = {
-      id: Date.now().toString(),
-      title: newTitle,
-      completed: false,
-    };
+    this.todosService.createTodo(newTitle)
+      .subscribe(() => this.loadTodos());
 
-    this.todos = [...this.todos, newTodo];
+    // this.todos = [...this.todos, newTodo];
   }
 
   renameTodo(todoId: string, title: string) {
