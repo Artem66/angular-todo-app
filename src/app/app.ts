@@ -12,7 +12,7 @@ import { TodosService } from './services/todos';
   selector: 'app-root',
   standalone: true,
   imports: [
-    RouterOutlet,
+    // RouterOutlet,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -47,16 +47,11 @@ export class App implements OnInit {
 
   }
   ngOnInit(): void {
-    this.loadTodos();
-  }
-
-  loadTodos() {
-    this.todosService.getTodos()
+    this.todosService.todos$
       .subscribe((todos) => {
         this.todos = todos;
       });
   }
-
 
   // get activeTodosCount(): number {
   //   return this.todos.filter(todo => !todo.completed).length;
@@ -68,32 +63,22 @@ export class App implements OnInit {
 
   addTodo(newTitle: string){
     this.todosService.createTodo(newTitle)
-      .subscribe(() => this.loadTodos());
+      .subscribe();
 
     // this.todos = [...this.todos, newTodo];
   }
 
-  renameTodo(todoId: string, title: string) {
-    this.todos = this.todos.map(todo => {
-      if (todo.id !== todoId) {
-        return todo;
-      }
-
-      return { ...todo, title, }
-    })
+  renameTodo(todo: TodoType, title: string) {
+    this.todosService.updateTodo({ ...todo, title })
+      .subscribe();
   }
 
-  toggleTodo(todoId: string) {
-    this.todos = this.todos.map(todo => {
-      if (todo.id !== todoId) {
-        return todo;
-      }
-
-      return { ...todo, completed: !todo.completed, }
-    })
+  toggleTodo(todo: TodoType) {
+    this.todosService.updateTodo({ ...todo, completed: !todo.completed })
   }
 
-  deleteTodo(todoId: string) {
-    this.todos = this.todos.filter(todo => todo.id !== todoId)
+  deleteTodo(todo: TodoType) {
+    this.todosService.deleteTodo(todo)
+      .subscribe();
   }
 }
