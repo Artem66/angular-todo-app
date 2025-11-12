@@ -2,11 +2,12 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Todo } from "./components/todo/todo";
+import { Todo } from './components/todo/todo';
 import { Todo as TodoType } from './types/todo';
-import { TodoForm } from "./components/todo-form/todo-form";
+import { TodoForm } from './components/todo-form/todo-form';
 import { FilterActivePipe } from './pipes/filter-active-pipe';
 import { TodosService } from './services/todos';
+import { Message } from './message/message';
 
 @Component({
   selector: 'app-root',
@@ -19,6 +20,7 @@ import { TodosService } from './services/todos';
     Todo,
     TodoForm,
     FilterActivePipe,
+    Message,
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss',
@@ -27,30 +29,28 @@ import { TodosService } from './services/todos';
 export class App implements OnInit {
   _todos: TodoType[] = [];
   activeTodos: TodoType[] = [];
+  errorMessage = '';
 
   get todos() {
     return this._todos;
   }
 
   set todos(todos: TodoType[]) {
-    if (todos === this._todos){
+    if (todos === this._todos) {
       return;
     }
 
     this._todos = todos;
-    this.activeTodos = this._todos.filter(todo => !todo.completed);
+    this.activeTodos = this._todos.filter((todo) => !todo.completed);
   }
 
-  constructor(
-    private todosService: TodosService
-  ) {
-
-  }
+  constructor(private todosService: TodosService) {}
   ngOnInit(): void {
-    this.todosService.todos$
-      .subscribe((todos) => {
-        this.todos = todos;
-      });
+    this.todosService.todos$.subscribe((todos) => {
+      this.todos = todos;
+    });
+
+    this.todosService.loadTodos().subscribe();
   }
 
   // get activeTodosCount(): number {
@@ -61,24 +61,21 @@ export class App implements OnInit {
     return item.id;
   }
 
-  addTodo(newTitle: string){
-    this.todosService.createTodo(newTitle)
-      .subscribe();
+  addTodo(newTitle: string) {
+    this.todosService.createTodo(newTitle).subscribe();
 
     // this.todos = [...this.todos, newTodo];
   }
 
   renameTodo(todo: TodoType, title: string) {
-    this.todosService.updateTodo({ ...todo, title })
-      .subscribe();
+    this.todosService.updateTodo({ ...todo, title }).subscribe();
   }
 
   toggleTodo(todo: TodoType) {
-    this.todosService.updateTodo({ ...todo, completed: !todo.completed })
+    this.todosService.updateTodo({ ...todo, completed: !todo.completed }).subscribe();
   }
 
   deleteTodo(todo: TodoType) {
-    this.todosService.deleteTodo(todo)
-      .subscribe();
+    this.todosService.deleteTodo(todo).subscribe();
   }
 }
