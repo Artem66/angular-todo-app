@@ -8,6 +8,7 @@ import { TodoForm } from './components/todo-form/todo-form';
 import { FilterActivePipe } from './pipes/filter-active-pipe';
 import { TodosService } from './services/todos';
 import { Message } from './message/message';
+import { MessageService } from './service/message';
 
 @Component({
   selector: 'app-root',
@@ -44,13 +45,21 @@ export class App implements OnInit {
     this.activeTodos = this._todos.filter((todo) => !todo.completed);
   }
 
-  constructor(private todosService: TodosService) {}
+  constructor(
+    private todosService: TodosService,
+    private messageService: MessageService
+  ) {}
+
   ngOnInit(): void {
     this.todosService.todos$.subscribe((todos) => {
       this.todos = todos;
     });
 
-    this.todosService.loadTodos().subscribe();
+    this.todosService.loadTodos().subscribe({
+      error: (err) => {
+        this.messageService.showMessage('Failed to load todos');
+      }
+    });
   }
 
   // get activeTodosCount(): number {
@@ -62,20 +71,34 @@ export class App implements OnInit {
   }
 
   addTodo(newTitle: string) {
-    this.todosService.createTodo(newTitle).subscribe();
-
-    // this.todos = [...this.todos, newTodo];
+    this.todosService.createTodo(newTitle).subscribe({
+      error: (err) => {
+        this.messageService.showMessage('Failed to create todo');
+      }
+    });
   }
 
   renameTodo(todo: TodoType, title: string) {
-    this.todosService.updateTodo({ ...todo, title }).subscribe();
+    this.todosService.updateTodo({ ...todo, title }).subscribe({
+      error: (err) => {
+        this.messageService.showMessage('Failed to rename todo');
+      }
+    });
   }
 
   toggleTodo(todo: TodoType) {
-    this.todosService.updateTodo({ ...todo, completed: !todo.completed }).subscribe();
+    this.todosService.updateTodo({ ...todo, completed: !todo.completed }).subscribe({
+      error: (err) => {
+        this.messageService.showMessage('Failed to toggle todo');
+      }
+    });
   }
 
   deleteTodo(todo: TodoType) {
-    this.todosService.deleteTodo(todo).subscribe();
+    this.todosService.deleteTodo(todo).subscribe({
+      error: (err) => {
+        this.messageService.showMessage('Failed to delete todo');
+      }
+    });
   }
 }

@@ -1,10 +1,15 @@
 <article
   class="message is-danger"
-  [class.message--hidden]="!message"
+  [class.message--hidden]="hidden"
   >
   <div class="message-header">
     <p>{{ title }}</p>
-    <button class="delete" aria-label="delete" (click)="message = ''"></button>
+    <button 
+      class="delete"
+      aria-label="delete" 
+      (click)="hidden = true">
+        X
+      </button>
   </div>
   <div class="message-body">
     {{ message }}
