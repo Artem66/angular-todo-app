@@ -1,7 +1,7 @@
-@use "./todoapp" as todoapp;
-@use "./todo" as todo;
-@use "./filter" as filter;
-@use "./transition" as transition;
+@use './todoapp' as todoapp;
+@use './todo' as todo;
+@use './filter' as filter;
+@use './transition' as transition;
 
 iframe {
   display: none;
@@ -23,4 +23,17 @@ body {
   min-height: 0;
   opacity: 0;
   pointer-events: none;
+}
+
+.header {
+  padding: 10px;
+  margin-bottom: 20px;
+  background: #333333;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+
+  & a {
+    color: #ffffff;
+  }
 }
