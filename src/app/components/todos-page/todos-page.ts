@@ -7,8 +7,9 @@ import { Todo as TodoType } from '../../types/todo';
 import { TodoForm } from '../todo-form/todo-form';
 import { FilterActivePipe } from '../../pipes/filter-active-pipe';
 import { TodosService } from '../../services/todos';
-import { Message } from '../../message/message';
+import { Message } from '../message/message';
 import { MessageService } from '../../service/message';
+import { map, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-todos-page',
@@ -20,50 +21,31 @@ import { MessageService } from '../../service/message';
     ReactiveFormsModule,
     Todo,
     TodoForm,
-    FilterActivePipe,
+    // FilterActivePipe,
     Message,
   ],
   templateUrl: './todos-page.html',
-  // changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TodosPage implements OnInit {
-  _todos: TodoType[] = [];
-  activeTodos: TodoType[] = [];
   errorMessage = '';
 
-  get todos() {
-    return this._todos;
-  }
+  constructor(private todosService: TodosService, private messageService: MessageService) {}
 
-  set todos(todos: TodoType[]) {
-    if (todos === this._todos) {
-      return;
-    }
+  todos$!: Observable<TodoType[]>;
+  activeTodos$!: Observable<TodoType[]>;
+  activeCount$!: Observable<number>;
 
-    this._todos = todos;
-    this.activeTodos = this._todos.filter((todo) => !todo.completed);
-  }
-
-  constructor(
-    private todosService: TodosService,
-    private messageService: MessageService
-  ) {}
-
-  ngOnInit(): void {
-    this.todosService.todos$.subscribe((todos) => {
-      this.todos = todos;
-    });
+  ngOnInit() {
+    this.todos$ = this.todosService.todos$;
+    this.activeTodos$ = this.todos$.pipe(map((todos) => todos.filter((todo) => !todo.completed)));
+    this.activeCount$ = this.activeTodos$.pipe(map((todos) => todos.length));
 
     this.todosService.loadTodos().subscribe({
       error: (err) => {
         this.messageService.showMessage('Failed to load todos');
-      }
+      },
     });
   }
-
-  // get activeTodosCount(): number {
-  //   return this.todos.filter(todo => !todo.completed).length;
-  // }
 
   trackById(index: number, item: TodoType) {
     return item.id;
@@ -73,7 +55,7 @@ export class TodosPage implements OnInit {
     this.todosService.createTodo(newTitle).subscribe({
       error: (err) => {
         this.messageService.showMessage('Failed to create todo');
-      }
+      },
     });
   }
 
@@ -81,7 +63,7 @@ export class TodosPage implements OnInit {
     this.todosService.updateTodo({ ...todo, title }).subscribe({
       error: (err) => {
         this.messageService.showMessage('Failed to rename todo');
-      }
+      },
     });
   }
 
@@ -89,7 +71,7 @@ export class TodosPage implements OnInit {
     this.todosService.updateTodo({ ...todo, completed: !todo.completed }).subscribe({
       error: (err) => {
         this.messageService.showMessage('Failed to toggle todo');
-      }
+      },
     });
   }
 
@@ -97,7 +79,7 @@ export class TodosPage implements OnInit {
     this.todosService.deleteTodo(todo).subscribe({
       error: (err) => {
         this.messageService.showMessage('Failed to delete todo');
-      }
+      },
     });
   }
 }

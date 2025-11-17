@@ -1,5 +1,5 @@
 <div class="todoapp">
-      <h1 class="todoapp__title"> Todos {{todos.length}} </h1>
+      <h1 class="todoapp__title"> Todos</h1>
 
       <div class="todoapp__content">
         <header class="todoapp__header">
@@ -14,7 +14,7 @@
 
         <section class="todoapp__main" data-cy="TodoList">
           <app-todo
-            *ngFor="let todo of todos; let i = index; trackBy:trackById"
+            *ngFor="let todo of todos$ | async; let i = index; trackBy:trackById"
             [todo]="todo"
             (delete)="deleteTodo(todo)"
             (rename)="renameTodo(todo, $event)"
@@ -24,8 +24,7 @@
 
         <footer class="todoapp__footer" data-cy="Footer">
           <span class="todo-count" data-cy="todosCounter">
-            {{ (todos | filterActive).length }} pipe items left
-            {{ activeTodos.length }} setter items left
+            {{ activeCount$ | async }} setter items left
           </span>
 
           <nav class="filter" data-cy="Filter">
