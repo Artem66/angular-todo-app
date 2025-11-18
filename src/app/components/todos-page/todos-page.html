@@ -14,7 +14,7 @@
 
         <section class="todoapp__main" data-cy="TodoList">
           <app-todo
-            *ngFor="let todo of todos$ | async; let i = index; trackBy:trackById"
+            *ngFor="let todo of visibleTodos$ | async; let i = index; trackBy:trackById"
             [todo]="todo"
             (delete)="deleteTodo(todo)"
             (rename)="renameTodo(todo, $event)"
@@ -27,35 +27,13 @@
             {{ activeCount$ | async }} setter items left
           </span>
 
-          <nav class="filter" data-cy="Filter">
-            <a
-              data-cy="FilterLinkAll"
-              href="#/"
-              class="filter__link selected"
-            >
-              All
-            </a>
-
-            <a
-              data-cy="FilterLinkActive"
-              href="#/active"
-              class="filter__link"
-            >
-              Active
-            </a>
-            <a
-              data-cy="FilterLinkCompleted"
-              href="#/completed"
-              class="filter__link"
-            >
-              Completed
-            </a>
-          </nav>
+          <app-filter></app-filter>
 
           <button
             data-cy="ClearCompletedButton"
             type="button"
             class="todoapp__clear-completed"
+            (click)="clearCompleted()"
           >
             Clear completed
           </button>

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { ActivatedRoute, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Todo } from '../todo/todo';
@@ -9,7 +9,8 @@ import { FilterActivePipe } from '../../pipes/filter-active-pipe';
 import { TodosService } from '../../services/todos';
 import { Message } from '../message/message';
 import { MessageService } from '../../service/message';
-import { map, Observable } from 'rxjs';
+import { map, Observable, switchMap } from 'rxjs';
+import { Filter } from "../filter/filter";
 
 @Component({
   selector: 'app-todos-page',
@@ -23,22 +24,45 @@ import { map, Observable } from 'rxjs';
     TodoForm,
     // FilterActivePipe,
     Message,
-  ],
+    Filter
+],
   templateUrl: './todos-page.html',
 })
 export class TodosPage implements OnInit {
   errorMessage = '';
 
-  constructor(private todosService: TodosService, private messageService: MessageService) {}
+  constructor(
+    private todosService: TodosService,
+    private messageService: MessageService,
+    private route: ActivatedRoute,
+  ) {}
 
   todos$!: Observable<TodoType[]>;
   activeTodos$!: Observable<TodoType[]>;
+  complitedTodos$!: Observable<TodoType[]>;
   activeCount$!: Observable<number>;
+
+  visibleTodos$!: Observable<TodoType[]>;
 
   ngOnInit() {
     this.todos$ = this.todosService.todos$;
     this.activeTodos$ = this.todos$.pipe(map((todos) => todos.filter((todo) => !todo.completed)));
+    this.complitedTodos$ = this.todos$.pipe(map((todos) => todos.filter((todo) => todo.completed)));
     this.activeCount$ = this.activeTodos$.pipe(map((todos) => todos.length));
+
+    this.visibleTodos$ = this.route.params.pipe(
+      switchMap(params => {
+        switch (params['filterStatus']) {
+          case 'active':
+            return this.activeTodos$;
+          case 'completed':
+            return this.complitedTodos$;
+          case 'all':
+          default:
+            return this.todos$;
+        }
+      })
+    );
 
     this.todosService.loadTodos().subscribe({
       error: (err) => {
@@ -82,4 +106,11 @@ export class TodosPage implements OnInit {
       },
     });
   }
+
+  clearCompleted() {
+  this.todosService.clearCompleted().subscribe({
+    error: () => this.messageService.showMessage('Failed to clear completed')
+  });
+}
+
 }

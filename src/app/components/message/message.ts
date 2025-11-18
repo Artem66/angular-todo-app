@@ -29,8 +29,6 @@ export class Message implements OnInit, OnDestroy {
       takeUntil(this.destroy$$)
     )
       .subscribe(text => {
-        console.log(2);
-        
         this.message = text;
         this.hidden = false;
       });

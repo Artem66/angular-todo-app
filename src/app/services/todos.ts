@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Todo } from '../types/todo';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, ReplaySubject, Subject, switchMap, tap, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, forkJoin, map, Observable, ReplaySubject, Subject, switchMap, take, tap, withLatestFrom } from 'rxjs';
 
 const todosFromServer: Todo[] = [
   { id: '1', title: 'Learn Angular', completed: true },
@@ -75,5 +75,28 @@ export class TodosService {
           )
         })
       );
+  }
+
+  clearCompleted() {
+    return this.todos$.pipe(
+      take(1),
+      map(todos => ({
+        todos,
+        completed: todos.filter(t => t.completed)
+      })),
+      switchMap(({ todos, completed }) =>
+        forkJoin(
+          completed.map(({ id }) =>
+            this.http.delete(`${API_URL}/todos/${id}`)
+          )
+        ).pipe(
+          tap(() => {
+            this.todos$$.next(
+              todos.filter(t => !t.completed)
+            );
+          })
+        )
+      )
+    );
   }
 }
